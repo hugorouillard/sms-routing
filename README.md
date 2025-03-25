@@ -25,7 +25,7 @@ simulates sms delivery in a mobile network using rabbitmq
 
 ---
 
-## tech stack
+## prerequisites 
 
 - java
 - rabbitmq
