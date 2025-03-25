@@ -9,12 +9,11 @@ import java.util.concurrent.TimeoutException;
 public class RabbitMQConnection {
     private static Connection connection;
 
-    public Connection getConnection(String hostAddress) throws IOException, TimeoutException {
+    public static Connection getConnection(String hostAddress) throws IOException, TimeoutException {
         if (connection == null || !connection.isOpen()) {
             ConnectionFactory factory = new ConnectionFactory();
             factory.setHost(hostAddress);
             connection = factory.newConnection();
-            Channel channel = connection.createChannel();
         }
         return connection;
     }

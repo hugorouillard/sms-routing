@@ -1,21 +1,18 @@
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 import java.io.IOException;
 
-public class AntennaNode {
+public class Antenna {
     private final String id;
     private final String queueName;
     private Channel channel;
 
-    public AntennaNode(String id) {
+    public Antenna(String id) {
         this.id = id;
         this.queueName = "antenna_" + id;
         try {
-            ConnectionFactory connectionFactory = new ConnectionFactory();
-
-            Connection connection = connectionFactory.newConnection();
+            Connection connection = RabbitMQConnection.getConnection("localhost");
             this.channel = connection.createChannel();
             channel.queueDeclare(queueName, false, false, false, null);
         } catch (Exception e) {
