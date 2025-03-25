@@ -1,11 +1,11 @@
-# sms routing
+# SMS Routing
 
 distributed systems project - 2025  
 simulates sms delivery in a mobile network using rabbitmq
 
 ---
 
-## overview
+## Overview
 
 - users are connected to antennas
 - antennas are distributed nodes
@@ -15,7 +15,14 @@ simulates sms delivery in a mobile network using rabbitmq
 
 ---
 
-## components
+## Prerequisites
+
+- java
+- rabbitmq
+ 
+---
+
+## Components
 
 - **directory service**: tracks current antenna for each user
 
@@ -23,16 +30,10 @@ simulates sms delivery in a mobile network using rabbitmq
 
 - **user**: connects to an antenna, can move, can send/receive messages
 
----
-
-## prerequisites 
-
-- java
-- rabbitmq
 
 ---
 
-## how to run
+## How to run
 
 1. start rabbitmq
 2. run the directory service
@@ -41,7 +42,7 @@ simulates sms delivery in a mobile network using rabbitmq
 
 ---
 
-## notes
+## Notes
 
 built as part of the distributed systems course  
 Université Grenoble Alpes - M1 INFO, 2025
