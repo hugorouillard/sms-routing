@@ -1,7 +1,15 @@
 import java.util.*;
+import java.util.logging.*;
 
 public class Main {
     public static void main(String[] args) throws Exception {
+        LogManager.getLogManager().reset();
+        Logger rootLogger = Logger.getLogger("");
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setLevel(Level.FINE);
+        rootLogger.setLevel(Level.FINE);
+        rootLogger.addHandler(handler);
+
         String antennaName = args[0];
 
         Map<String, List<String>> userMap = new HashMap<>() {{
@@ -21,11 +29,11 @@ public class Main {
         if (antennaName.equals("A")) {
             User alice = new User("alice", "A");
             Thread.sleep(3000); // let system stabilize
-            alice.sendSMS("charlie", "hello from alice from antenna A");
+            alice.sendSMS("charlie", "hello Charlie!");
             Thread.sleep(3000);
             alice.moveTo("C");
             Thread.sleep(3000);
-            alice.sendSMS("bob", "hello from alice from antenna C");
+            alice.sendSMS("bob", "hello Bob!");
         }
     }
 }

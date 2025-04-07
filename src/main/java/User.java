@@ -15,27 +15,30 @@ public class User {
         factory.setHost("localhost");
         Connection connection = factory.newConnection();
         this.channel = connection.createChannel();
-        channel.exchangeDeclare(EXCHANGE, BuiltinExchangeType.FANOUT);
     }
 
+    // Method to simulate sending an SMS message
     public void sendSMS(String recipient, String content) throws Exception {
         Message msg = new Message(name, recipient, content, 5, Message.Type.SMS);
         send(msg);
     }
 
+    // Method to simulate the user physically moving to a new Antenna
+    // we simulate that by sending a MOVE message to the old antenna
     public void moveTo(String newAntenna) throws Exception {
-        System.out.println("[User] " + name + " moving to " + newAntenna);
+//        System.out.println("[User] " + name + " moving to " + newAntenna);
         Message moveMsg = new Message(name, newAntenna, "MOVE", 5, Message.Type.MOVE);
         send(moveMsg);
         currentAntenna = newAntenna;
     }
 
+    // Method to simulate communication with the antenna
     private void send(Message msg) throws Exception {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream out = new ObjectOutputStream(bos);
         out.writeObject(msg);
         out.flush();
         byte[] data = bos.toByteArray();
-        channel.basicPublish(EXCHANGE, "", null, data);
+        channel.basicPublish(EXCHANGE, currentAntenna, null, data);
     }
 }
