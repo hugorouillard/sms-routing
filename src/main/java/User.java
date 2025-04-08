@@ -15,6 +15,10 @@ public class User {
         factory.setHost("localhost");
         Connection connection = factory.newConnection();
         this.channel = connection.createChannel();
+
+        // connect to initial antenna
+        moveTo(initialAntenna);
+
     }
 
     // Method to simulate sending an SMS message
@@ -24,12 +28,12 @@ public class User {
     }
 
     // Method to simulate the user physically moving to a new Antenna
-    // we simulate that by sending a MOVE message to the old antenna
+    // We simulate this by sending a MOVE message to the new antenna
     public void moveTo(String newAntenna) throws Exception {
-//        System.out.println("[User] " + name + " moving to " + newAntenna);
         Message moveMsg = new Message(name, newAntenna, "MOVE", 5, Message.Type.MOVE);
         send(moveMsg);
         currentAntenna = newAntenna;
+
     }
 
     // Method to simulate communication with the antenna
