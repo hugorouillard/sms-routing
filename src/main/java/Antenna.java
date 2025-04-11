@@ -55,6 +55,12 @@ public class Antenna {
         System.out.println(getUsers());
         if (users.contains(msg.recipient)) {
             System.out.println("Delivered to " + msg.recipient + ": " + msg.content);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream out = new ObjectOutputStream(bos);
+            out.writeObject(msg);
+            out.flush();
+            byte[] data = bos.toByteArray();
+            channel.basicPublish(EXCHANGE, "user_" + msg.recipient, null, data);
         } else {
             System.out.println("User " + msg.recipient + " not found. Forwarding...");
             msg.ttl--;
