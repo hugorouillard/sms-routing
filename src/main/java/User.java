@@ -9,7 +9,7 @@ public class User {
 
     public User(String name, String initialAntenna) throws Exception {
         this.name = name;
-        this.currentAntenna = initialAntenna;
+        this.currentAntenna = "";
 
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
@@ -30,8 +30,8 @@ public class User {
     // We simulate this by sending a MOVE message to the new antenna
     public void moveTo(String newAntenna) throws Exception {
         MoveMessage moveMsg = new MoveMessage(name, newAntenna, currentAntenna, 5);
-        send(moveMsg);
         currentAntenna = newAntenna;
+        send(moveMsg);
     }
 
     // Method to simulate communication with the antenna

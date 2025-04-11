@@ -33,11 +33,11 @@ public class Antenna {
             try (ByteArrayInputStream bis = new ByteArrayInputStream(delivery.getBody());
                  ObjectInput in = new ObjectInputStream(bis)) {
                 Message msg = (Message) in.readObject();
-                System.out.println("Received message from " + msg.sender + " to " + msg.recipient);
+                System.out.println("Received message from " + msg.sender);
 
                 if (msg.visited.contains(name) || msg.ttl <= 0) return;
                 msg.visited.add(name);
-                System.out.println(msg.visited);
+                System.out.println("VISITED: " + msg.visited);
 
                 if (msg instanceof SMSMessage) {
                     handleSms((SMSMessage) msg);
@@ -64,25 +64,25 @@ public class Antenna {
 
     private void handleMove(MoveMessage msg) {
         String user = msg.sender;
-        String target = msg.recipient;
+        String newAntenna = msg.newAntenna;
         String oldAntenna = msg.oldAntenna;
 
-        if (name.equals(target)) {
+        if (name.equals(newAntenna)) {
             users.add(user);
             System.out.println("User " + user + " connected to " + name);
 
-            // Notify the old antenna to remove the user
-            MoveMessage notifyOldAntenna = new MoveMessage(user, oldAntenna, name, 5);
-            try {
-                forward(notifyOldAntenna);
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (!oldAntenna.isEmpty()) {
+                // Notify the old antenna to remove the user
+                try {
+                    forward(msg);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         } else if (name.equals(oldAntenna)) {
             users.remove(user);
             System.out.println("User " + user + " disconnected from " + name);
         } else {
-            // Forward the message if it's not for a user in this antenna
             msg.ttl--;
             try {
                 forward(msg);
