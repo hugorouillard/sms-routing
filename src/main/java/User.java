@@ -18,22 +18,20 @@ public class User {
 
         // connect to initial antenna
         moveTo(initialAntenna);
-
     }
 
     // Method to simulate sending an SMS message
     public void sendSMS(String recipient, String content) throws Exception {
-        Message msg = new Message(name, recipient, content, 5, Message.Type.SMS);
+        SMSMessage msg = new SMSMessage(name, recipient, content, 5);
         send(msg);
     }
 
     // Method to simulate the user physically moving to a new Antenna
     // We simulate this by sending a MOVE message to the new antenna
     public void moveTo(String newAntenna) throws Exception {
-        Message moveMsg = new Message(name, newAntenna, "MOVE", 5, Message.Type.MOVE);
+        MoveMessage moveMsg = new MoveMessage(name, newAntenna, currentAntenna, 5);
         send(moveMsg);
         currentAntenna = newAntenna;
-
     }
 
     // Method to simulate communication with the antenna

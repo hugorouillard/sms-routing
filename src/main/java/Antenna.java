@@ -1,11 +1,8 @@
 import com.rabbitmq.client.*;
 import java.io.*;
 import java.util.*;
-import java.util.logging.*;
 
 public class Antenna {
-    private static final Logger logger = Logger.getLogger(Antenna.class.getName());
-
     private String name;
     private Set<String> users;
     private List<String> neighbors;
@@ -36,18 +33,16 @@ public class Antenna {
             try (ByteArrayInputStream bis = new ByteArrayInputStream(delivery.getBody());
                  ObjectInput in = new ObjectInputStream(bis)) {
                 Message msg = (Message) in.readObject();
-                System.out.println("Received message: " + msg.type + " from " + msg.sender + " to " + msg.recipient);
+                System.out.println("Received message from " + msg.sender + " to " + msg.recipient);
 
                 if (msg.visited.contains(name) || msg.ttl <= 0) return;
                 msg.visited.add(name);
+                System.out.println(msg.visited);
 
-                switch (msg.type) {
-                    case SMS:
-                        handleSms(msg);
-                        break;
-                    case MOVE:
-                        handleMove(msg);
-                        break;
+                if (msg instanceof SMSMessage) {
+                    handleSms((SMSMessage) msg);
+                } else if (msg instanceof MoveMessage) {
+                    handleMove((MoveMessage) msg);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -56,7 +51,7 @@ public class Antenna {
         channel.basicConsume(name, true, callback, consumerTag -> {});
     }
 
-    private void handleSms(Message msg) throws IOException {
+    private void handleSms(SMSMessage msg) throws IOException {
         System.out.println(getUsers());
         if (users.contains(msg.recipient)) {
             System.out.println("Delivered to " + msg.recipient + ": " + msg.content);
@@ -67,17 +62,27 @@ public class Antenna {
         }
     }
 
-    private void handleMove(Message msg) {
+    private void handleMove(MoveMessage msg) {
         String user = msg.sender;
         String target = msg.recipient;
+        String oldAntenna = msg.oldAntenna;
 
         if (name.equals(target)) {
             users.add(user);
-            System.out.println("User " + user + " arrived.");
-        } else if (users.contains(user)) {
+            System.out.println("User " + user + " connected to " + name);
+
+            // Notify the old antenna to remove the user
+            MoveMessage notifyOldAntenna = new MoveMessage(user, oldAntenna, name, 5);
+            try {
+                forward(notifyOldAntenna);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else if (name.equals(oldAntenna)) {
             users.remove(user);
-            System.out.println("User " + user + " departed.");
+            System.out.println("User " + user + " disconnected from " + name);
         } else {
+            // Forward the message if it's not for a user in this antenna
             msg.ttl--;
             try {
                 forward(msg);

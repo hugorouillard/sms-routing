@@ -1,15 +1,8 @@
+
 import java.util.*;
-import java.util.logging.*;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        LogManager.getLogManager().reset();
-        Logger rootLogger = Logger.getLogger("");
-        ConsoleHandler handler = new ConsoleHandler();
-        handler.setLevel(Level.FINE);
-        rootLogger.setLevel(Level.FINE);
-        rootLogger.addHandler(handler);
-
         String antennaName = args[0];
 
         Map<String, List<String>> userMap = new HashMap<>() {{
